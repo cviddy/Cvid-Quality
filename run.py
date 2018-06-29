@@ -17,9 +17,6 @@ query = base_url + search + '?q=org:hudl+label:"Type: Hotfix"+is:merged+merged:{
 response = requests.get(query)
 body = response.json()
 
-print(query)
-print(body)
-
 hotfixes = []
 
 for item in body['items']:
