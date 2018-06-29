@@ -1,7 +1,7 @@
 import requests
 import json
 
-from_date = '2018-06-01'
+from_date = '2018-06-13'
 to_date = '2018-06-27'
 
 base_url = 'https://api.github.com'
@@ -22,6 +22,12 @@ hotfixes = []
 for item in body['items']:
     hotfixes.append(item['pull_request']['html_url'])
 
+# Can use this to exclude urls of PRs we don't want to track
+# Eventually might want to remove npm packages and js bundles
+hotfixes = [
+    url for url in hotfixes
+    if 'npm' not in url.lower()
+]
 
 # Print to console
 print(hotfixes)
