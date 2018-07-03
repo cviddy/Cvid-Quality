@@ -1,8 +1,12 @@
 import requests
 import json
+import datetime
 
-from_date = '2018-06-13'
-to_date = '2018-06-27'
+toDate = datetime.datetime.today()
+toDateStr = toDate.strftime("%Y-%m-%d")
+
+fromDate = toDate - datetime.timedelta(days=7)
+fromDateStr = fromDate.strftime("%Y-%m-%d")
 
 base_url = 'https://api.github.com'
 search = '/search/issues'
@@ -10,8 +14,8 @@ search = '/search/issues'
 secrets = json.load(open('local.json'))
 
 query = base_url + search + '?q=org:hudl+label:"Type: Hotfix"+is:merged+merged:{from_date}..{to_date}&access_token={token}'.format(
-    from_date=from_date,
-    to_date=to_date,
+    from_date=fromDateStr,
+    to_date=toDateStr,
     token=secrets['token'])
 
 response = requests.get(query)
@@ -24,6 +28,7 @@ for item in body['items']:
 
 # Can use this to exclude urls of PRs we don't want to track
 # Eventually might want to remove npm packages and js bundles
+# Can add more ifs to list below to exclude any repos
 hotfixes = [
     url for url in hotfixes
     if 'npm' not in url.lower()
