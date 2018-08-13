@@ -2,6 +2,8 @@ import requests
 import json
 import datetime
 
+from slackclient import SlackClient
+
 toDate = datetime.datetime.today()
 toDateStr = toDate.strftime("%Y-%m-%d")
 
@@ -47,3 +49,17 @@ with open('results.txt', 'a') as file:
     # Add new
     for hotfix in hotfixes:
         file.write(hotfix + "\n")
+
+
+# Use slacks API to post to a room of your choosing. Currently posting to a test channel
+# must generate a slack api token here: https://api.slack.com/custom-integrations/legacy-tokens
+# TODO: Look into making an application since legacy tokens are no longer supported
+slack_token = secrets['slacktoken']
+sc = SlackClient(slack_token)
+
+# https://github.com/slackapi/python-slackclient
+sc.api_call(
+    "chat.postMessage",
+    channel="GC7UD6FV4",
+    text=hotfixes
+)
