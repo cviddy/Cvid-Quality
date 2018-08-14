@@ -15,6 +15,7 @@ search = '/search/issues'
 
 secrets = json.load(open('local.json'))
 
+# When creating github api calls you always need access token at the end of url
 query = base_url + search + '?q=org:hudl+label:"Type: Hotfix"+is:merged+merged:{from_date}..{to_date}&access_token={token}'.format(
     from_date=fromDateStr,
     to_date=toDateStr,
@@ -23,10 +24,10 @@ query = base_url + search + '?q=org:hudl+label:"Type: Hotfix"+is:merged+merged:{
 response = requests.get(query)
 body = response.json()
 
+# Creates list of urls for api call to get single PR information
 hotfixes = []
-
 for item in body['items']:
-    hotfixes.append(item['pull_request']['html_url'])
+    hotfixes.append(item['pull_request']['url'])
 
 # Can use this to exclude urls of PRs we don't want to track
 # Eventually might want to remove npm packages and js bundles
@@ -36,8 +37,21 @@ hotfixes = [
     if 'npm' not in url.lower()
 ]
 
-# Print to console
-print(hotfixes)
+hotfix_dates_urls = []
+for hot in hotfixes:
+    # https://developer.github.com/v3/pulls/#get-a-single-pull-request
+    query2 = hot + '?access_token={token}'.format(token=secrets['token'])
+    response2 = requests.get(query2)
+    body2 = response2.json()
+
+    url = body2['html_url']
+    merged_date = body2['merged_at']
+
+    dates_urls = str(merged_date) + ' - ' + url
+
+    hotfix_dates_urls.append(dates_urls )
+
+print(hotfix_dates_urls)
 
 # Or write to a file if you want.
 with open('results.txt', 'a') as file:
@@ -47,7 +61,7 @@ with open('results.txt', 'a') as file:
     file.truncate()
 
     # Add new
-    for hotfix in hotfixes:
+    for hotfix in hotfix_dates_urls:
         file.write(hotfix + "\n")
 
 
@@ -60,6 +74,6 @@ sc = SlackClient(slack_token)
 # https://github.com/slackapi/python-slackclient
 sc.api_call(
     "chat.postMessage",
-    channel="GC7UD6FV4",
-    text=hotfixes
+    channel="CC756Q56U",
+    text=hotfix_dates_urls
 )
