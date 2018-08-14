@@ -49,7 +49,7 @@ for hot in hotfixes:
 
     dates_urls = str(merged_date) + ' - ' + url
 
-    hotfix_dates_urls.append(dates_urls )
+    hotfix_dates_urls.append(dates_urls)
 
 print(hotfix_dates_urls)
 
