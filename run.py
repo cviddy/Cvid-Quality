@@ -2,6 +2,8 @@ import requests
 import json
 import datetime
 
+from diff import get_diff
+
 from slackclient import SlackClient
 
 toDate = datetime.datetime.today()
@@ -37,6 +39,10 @@ hotfixes = [
     if 'npm' not in url.lower()
 ]
 
+# Eventually we will want to make sure we aren't double posting based on when we run the query. 
+# we can avoid this by setting on a schedule from day to day but we can also use this to remove dups
+old_hot = get_diff(hotfixes)
+
 hotfix_dates_urls = []
 for hot in hotfixes:
     # https://developer.github.com/v3/pulls/#get-a-single-pull-request
@@ -71,9 +77,11 @@ with open('results.txt', 'a') as file:
 slack_token = secrets['slacktoken']
 sc = SlackClient(slack_token)
 
+slack_message = "Hey @cvid take a look at these hotfixes  " + str(hotfix_dates_urls)
+
 # https://github.com/slackapi/python-slackclient
 sc.api_call(
     "chat.postMessage",
     channel="CC756Q56U",
-    text=hotfix_dates_urls
+    text=slack_message
 )
