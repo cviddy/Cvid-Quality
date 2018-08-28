@@ -9,7 +9,7 @@ from slackclient import SlackClient
 toDate = datetime.datetime.today()
 toDateStr = toDate.strftime("%Y-%m-%d")
 
-fromDate = toDate - datetime.timedelta(days=7)
+fromDate = toDate - datetime.timedelta(days=3)
 fromDateStr = fromDate.strftime("%Y-%m-%d")
 
 base_url = 'https://api.github.com'
@@ -23,6 +23,7 @@ query = base_url + search + '?q=org:hudl+label:"Type: Hotfix"+is:merged+merged:{
     to_date=toDateStr,
     token=secrets['token'])
 
+print(query)
 response = requests.get(query)
 body = response.json()
 
@@ -41,7 +42,7 @@ hotfixes = [
 
 # Eventually we will want to make sure we aren't double posting based on when we run the query. 
 # we can avoid this by setting on a schedule from day to day but we can also use this to remove dups
-old_hot = get_diff(hotfixes)
+# old_hot = get_diff(hotfixes)
 
 hotfix_dates_urls = []
 for hot in hotfixes:
