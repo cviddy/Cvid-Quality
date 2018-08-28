@@ -3,21 +3,20 @@ import json
 import datetime
 
 from github.github import *
+from info import *
 
-from slackclient import SlackClient
+from models.create_file import write_results_to_local_file
+from models.slack import send_slack_message_with_list
+
+
 from diff import get_diff
 
-# Once tribes become more widely adopted with their labels we can run this to send messages out to tribe channels.
-tribes = ["Tribe: Analysis", "Tribe: Starship Enterprise"]
+tribes= get_tribes_from_json('tribes.json')
 
 # When creating github api calls you always need access token at the end of url
 for tribe in tribes: 
 
-    query = github_search_api_query(tribe)
-
-    print(query)
-    response = requests.get(query)
-    body = response.json()
+    body = github_search_api_query(tribe)
 
     # Creates list of urls for api call to get single PR information
     hotfixes = []
@@ -46,38 +45,6 @@ for tribe in tribes:
     print(hotfix_dates_urls)
 
     # Or write to a file if you want.
-    with open('results.txt', 'a') as file:
+    write_results_to_local_file(hotfix_dates_urls)
 
-        # DELETE old contents of results
-        file.seek(0)
-        file.truncate()
-
-        # Add new
-        for hotfix in hotfix_dates_urls:
-            file.write(hotfix + "\n")
-
-
-    # Use slacks API to post to a room of your choosing. Currently posting to a test channel
-    # must generate a slack api token here: https://api.slack.com/custom-integrations/legacy-tokens
-    # TODO: Look into making an application since legacy tokens are no longer supported
-    slack_token = secrets['slacktoken']
-    sc = SlackClient(slack_token)
-
-    slack_message = "Hey @cvid take a look at these hotfixes  " + str(hotfix_dates_urls)
-
-    if tribe == "Tribe: Analysis":
-        # https://github.com/slackapi/python-slackclient
-        sc.api_call(
-            "chat.postMessage",
-            channel="CC756Q56U",
-            text=slack_message
-        )
-    elif tribe == "Tribe: Starship Enterprise":
-        # https://github.com/slackapi/python-slackclient
-        sc.api_call(
-            "chat.postMessage",
-            channel="CC756Q56U",
-            text=slack_message
-        )
-    else: 
-        pass
+    send_slack_message_with_list(tribe, hotfix_dates_urls)
