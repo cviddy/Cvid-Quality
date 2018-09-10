@@ -2,8 +2,8 @@ import requests
 import json
 import datetime
 
-from github.github import *
 from info import *
+from tasks.github_calls import github_merge_date_PR_query, github_search_api_query
 
 from models.create_file import write_results_to_local_file
 from models.slack import send_slack_message_with_list

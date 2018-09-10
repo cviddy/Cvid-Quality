@@ -14,9 +14,9 @@ def send_slack_message_with_list(tribe, hotfix_dates_urls):
     :param tribe: 
     :param hotfix_dates_urls:
     """
-    
+
     if len(hotfix_dates_urls) > 0: 
-        slack_message = "Hey @cvid take a look at these hotfixes  " + str(hotfix_dates_urls)
+        slack_message = "Hey {} take a look at these hotfixes  ".format(tribe.tribe_name) + str(hotfix_dates_urls)
 
         # https://github.com/slackapi/python-slackclient
         sc.api_call(

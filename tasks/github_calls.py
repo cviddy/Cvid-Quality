@@ -37,7 +37,7 @@ def github_merge_date_PR_query(hot):
 
     :param hot: 
     """
-    
+
     # https://developer.github.com/v3/pulls/#get-a-single-pull-request
     query2 = hot + '?access_token={token}'.format(token=secrets['token'])
     response2 = requests.get(query2)
@@ -46,6 +46,6 @@ def github_merge_date_PR_query(hot):
     url = body2['html_url']
     merged_date = body2['merged_at']
 
-    dates_urls = str(merged_date) + ' - ' + url
+    dates_urls = str(merged_date) + ' - ' + url + ' ' 
 
     return dates_urls
