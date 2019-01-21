@@ -11,7 +11,7 @@ from models.slack import send_slack_message_with_list
 
 from diff import get_diff
 
-tribes= get_tribes_from_json('tribes.json')
+tribes = get_tribes_from_json('tribes.json')
 
 # When creating github api calls you always need access token at the end of url
 for tribe in tribes: 
